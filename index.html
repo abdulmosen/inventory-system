@@ -201,10 +201,13 @@
             }
         }
 
+        // دالة عرض النافذة المنبثقة وعرض الصور
         function openModal(description, shortDescription, category, balance, longDescription, warehouse) {
             const modal = document.getElementById('myModal');
             const modalContent = document.getElementById('modalContent');
-            const imageFolderPath = `./images/${category}`; // تحديد مسار مجلد الصور بناءً على حقل "الصنف"
+
+            // قم بتعديل المسار بناءً على الصنف (category) لعرض الصور
+            const imageUrl = `https://github.com/abdulmoseen/inventory-system/raw/main/images/${category}/1044592.jpg`;
 
             modalContent.innerHTML = `
                 <h2>${description || 'غير محدد'}</h2>
@@ -214,47 +217,10 @@
                 <p><strong>الرصيد:</strong> ${balance || 'غير محدد'}</p>
                 <p><strong>Long Description:</strong> ${longDescription || 'غير محدد'}</p>
                 <p><strong>المستودع:</strong> ${warehouse || 'غير محدد'}</p>
+                <img src="${imageUrl}" alt="Product Image" style="max-width: 100%;">
             `;
             modal.style.display = 'flex';
-
-            // استدعاء دالة لعرض جميع الصور من المجلد
-            loadImagesFromFolder(imageFolderPath);
         }
-
-        function loadImagesFromFolder(folderPath) {
-    const imageGallery = document.getElementById('imageGallery');
-    imageGallery.innerHTML = ''; // تفريغ معرض الصور القديم
-    document.getElementById('imageError').style.display = 'none'; // إخفاء رسالة الخطأ افتراضيًا
-
-    // افتراض أن الصور تحمل أسماء عشوائية ولكن داخل المجلد المحدد
-    fetch(`./${folderPath}/`) // التأكد من أن المجلد الصحيح يتم الوصول إليه
-        .then(response => response.text())
-        .then(html => {
-            // استخدام DOMParser لتحليل HTML المسترد
-            const parser = new DOMParser();
-            const doc = parser.parseFromString(html, 'text/html');
-            const images = Array.from(doc.querySelectorAll('a'))
-                .map(link => link.href)
-                .filter(href => href.endsWith('.jpg') || href.endsWith('.png') || href.endsWith('.jpeg'));
-
-            if (images.length > 0) {
-                images.forEach(imageUrl => {
-                    const imgElement = document.createElement('img');
-                    imgElement.src = imageUrl;
-                    imgElement.alt = 'Product Image';
-                    imgElement.style.maxWidth = '100%';
-                    imageGallery.appendChild(imgElement);
-                });
-            } else {
-                document.getElementById('imageError').style.display = 'block'; // عرض رسالة الخطأ إذا لم توجد صور
-            }
-        })
-        .catch(error => {
-            console.error('Error loading images:', error);
-            document.getElementById('imageError').style.display = 'block'; // إظهار رسالة خطأ إذا لم يتم جلب الصور
-        });
-}
-
 
         function closeModal() {
             document.getElementById('myModal').style.display = 'none';
